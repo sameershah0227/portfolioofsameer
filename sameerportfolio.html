@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alex Morgan | Full-Stack Developer & UI/UX Designer</title>
+
+    <!-- Design system: see DESIGN.md -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Public+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Public Sans"', 'system-ui', 'sans-serif'],
+                        label: ['"Space Grotesk"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        ink:  { DEFAULT: '#1A1C1E', muted: '#6C7278', soft: '#8A9098' },
+                        paper:{ DEFAULT: '#F7F5F2', raised: '#FFFFFF', sunken: '#EFEBE5' },
+                        clay: { DEFAULT: '#B8422E', dark: '#9E3625', soft: '#D9614A' },
+                        line: { DEFAULT: '#E2DDD5', dark: '#2A2D30' },
+                        night:{ DEFAULT: '#141516', raised: '#1C1E20', ink: '#EDEAE5', muted: '#9AA0A6' },
+                    },
+                    borderRadius: { sm: '4px', md: '8px' },
+                    maxWidth: { page: '1152px' },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :focus-visible {
+            outline: 2px solid #B8422E;
+            outline-offset: 2px;
+        }
+
+        /* Underline indicator shared by nav links and filter tabs */
+        .nav-link { position: relative; }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; bottom: -7px;
+            height: 2px;
+            background: currentColor;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform .25s ease;
+        }
+        .nav-link:hover::after,
+        .nav-link.is-active::after { transform: scaleX(1); }
+        .nav-link.is-active { color: #B8422E; }
+        .dark .nav-link.is-active { color: #D9614A; }
+
+        .filter-btn {
+            position: relative;
+            padding-bottom: .85rem;
+            color: #6C7278;
+            transition: color .2s ease;
+        }
+        .filter-btn::after {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; bottom: -1px;
+            height: 2px;
+            background: transparent;
+            transition: background .2s ease;
+        }
+        .filter-btn:hover { color: #1A1C1E; }
+        .dark .filter-btn:hover { color: #EDEAE5; }
+        .filter-btn.is-active { color: #1A1C1E; }
+        .dark .filter-btn.is-active { color: #EDEAE5; }
+        .filter-btn.is-active::after { background: #B8422E; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reveal-element {
+                opacity: 1 !important;
+                transform: none !important;
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-paper text-ink dark:bg-night dark:text-night-ink font-sans antialiased transition-colors duration-300 selection:bg-clay selection:text-white overflow-x-hidden">
+
+    <!-- ==================== NAVIGATION BAR ==================== -->
+    <header id="navbar" class="fixed top-0 left-0 right-0 z-40 bg-paper dark:bg-night border-b border-line dark:border-line-dark">
+        <div class="max-w-page mx-auto px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 md:h-20">
+
+                <a href="#home" class="flex items-center gap-3 group">
+                    <span class="w-9 h-9 rounded-sm bg-ink dark:bg-night-ink text-paper dark:text-ink flex items-center justify-center font-label font-semibold text-sm tracking-wide">
+                        AM
+                    </span>
+                    <span class="font-semibold tracking-tight text-ink dark:text-night-ink">
+                        Alex<span class="text-clay dark:text-clay-soft">.dev</span>
+                    </span>
+                </a>
+
+                <nav class="hidden md:flex items-center gap-9">
+                    <a href="#about" class="nav-link text-sm text-ink-muted dark:text-night-muted hover:text-ink dark:hover:text-night-ink transition-colors">About</a>
+                    <a href="#skills" class="nav-link text-sm text-ink-muted dark:text-night-muted hover:text-ink dark:hover:text-night-ink transition-colors">Skills</a>
+                    <a href="#projects" class="nav-link text-sm text-ink-muted dark:text-night-muted hover:text-ink dark:hover:text-night-ink transition-colors">Projects</a>
+                    <a href="#experience" class="nav-link text-sm text-ink-muted dark:text-night-muted hover:text-ink dark:hover:text-night-ink transition-colors">Experience</a>
+                    <a href="#contact" class="nav-link text-sm text-ink-muted dark:text-night-muted hover:text-ink dark:hover:text-night-ink transition-colors">Contact</a>
+                </nav>
+
+                <div class="flex items-center gap-2">
+                    <button id="theme-toggle" aria-label="Toggle dark mode" class="w-9 h-9 rounded-sm border border-line dark:border-line-dark text-ink dark:text-night-ink flex items-center justify-center hover:border-ink dark:hover:border-night-ink transition-colors">
+                        <i id="theme-icon-sun" class="fa-solid fa-sun text-[13px] hidden"></i>
+                        <i id="theme-icon-moon" class="fa-solid fa-moon text-[13px]"></i>
+                    </button>
+
+                    <a href="#contact" class="hidden sm:inline-flex items-center justify-center h-9 px-4 rounded-sm bg-ink dark:bg-night-ink text-paper dark:text-ink text-sm font-semibold hover:bg-clay dark:hover:bg-clay-soft dark:hover:text-ink transition-colors">
+                        Let's talk
+                    </a>
+
+                    <button id="mobile-menu-btn" aria-label="Open navigation menu" class="md:hidden w-9 h-9 rounded-sm border border-line dark:border-line-dark text-ink dark:text-night-ink flex items-center justify-center">
+                        <i id="mobile-menu-icon" class="fa-solid fa-bars text-[13px]"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Dropdown Navigation -->
+        <div id="mobile-menu" class="hidden md:hidden bg-paper dark:bg-night border-t border-line dark:border-line-dark px-6 py-4 space-y-1">
+            <a href="#about" class="mobile-nav-link block py-3 text-sm font-medium text-ink dark:text-night-ink border-b border-line dark:border-line-dark">About</a>
+            <a href="#skills" class="mobile-nav-link block py-3 text-sm font-medium text-ink dark:text-night-ink border-b border-line dark:border-line-dark">Skills</a>
+            <a href="#projects" class="mobile-nav-link block py-3 text-sm font-medium text-ink dark:text-night-ink border-b border-line dark:border-line-dark">Projects</a>
+            <a href="#experience" class="mobile-nav-link block py-3 text-sm font-medium text-ink dark:text-night-ink border-b border-line dark:border-line-dark">Experience</a>
+            <a href="#contact" class="mobile-nav-link block pt-3 text-sm font-semibold text-clay dark:text-clay-soft">Contact Me</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- ==================== HERO SECTION ==================== -->
+        <section id="home" class="pt-28 pb-20 md:pt-36 md:pb-28">
+            <div class="max-w-page mx-auto px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-14 items-start">
+
+                    <!-- Left Hero Text (7 / 12) -->
+                    <div class="lg:col-span-7 reveal-element opacity-0 translate-y-2 transition-all duration-700">
+                        <div class="inline-flex items-center gap-2.5 mb-8">
+                            <span class="w-1.5 h-1.5 bg-clay dark:bg-clay-soft"></span>
+                            <span class="font-label text-[11px] font-medium uppercase tracking-[0.14em] text-ink-muted dark:text-night-muted">
+                                Available for freelance &amp; full-time
+                            </span>
+                        </div>
+
+                        <p class="font-label text-[11px] font-medium uppercase tracking-[0.14em] text-ink-muted dark:text-night-muted mb-5">
+                            Hi, I'm Alex Morgan
+                        </p>
+
+                        <h1 class="text-[2.5rem] sm:text-5xl lg:text-[4rem] font-bold tracking-[-0.03em] leading-[1.05] text-ink dark:text-night-ink mb-7">
+                            Full-stack developer<br class="hidden sm:block"> &amp; interface designer.
+                        </h1>
+
+                        <p class="text-base md:text-[17px] leading-[1.7] text-ink-muted dark:text-night-muted max-w-[62ch] mb-10">
+                            I craft fast, accessible, and visually compelling digital experiences — bridging thoughtful interface design with scalable full-stack architecture.
+                        </p>
+
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                            <a href="#projects" class="inline-flex items-center justify-center gap-2.5 h-12 px-6 rounded-sm bg-ink dark:bg-night-ink text-paper dark:text-ink text-sm font-semibold hover:bg-clay dark:hover:bg-clay-soft dark:hover:text-ink transition-colors">
+                                View my work
+                                <i class="fa-solid fa-arrow-right text-[11px]"></i>
+                            </a>
+                            <a href="#contact" class="inline-flex items-center justify-center gap-2.5 h-12 px-6 rounded-sm border border-line dark:border-line-dark text-ink dark:text-night-ink text-sm font-semibold hover:border-ink dark:hover:border-night-ink transition-colors">
+                                <i class="fa-regular fa-paper-plane text-[12px]"></i>
+                                Get in touch
+                            </a>
+                        </div>
+
+                        <div class="mt-12 pt-6 border-t border-line dark:border-line-dark flex flex-wrap items-center gap-x-4 gap-y-3">
+                            <span class="font-label text-[11px] uppercase tracking-[0.14em] text-ink-soft dark:text-night-muted">Find me on</span>
+                            <div class="flex items-center gap-2">
+                                <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="w-9 h-9 rounded-sm border border-line dark:border-line-dark flex items-center justify-center text-ink-muted dark:text-night-muted hover:text-clay hover:border-clay dark:hover:text-clay-soft dark:hover:border-clay-soft transition-colors">
+                                    <i class="fa-brands fa-github text-sm"></i>
+                                </a>
+                                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="w-9 h-9 rounded-sm border border-line dark:border-line-dark flex items-center justify-center text-ink-muted dark:text-night-muted hover:text-clay hover:border-clay dark:hover:text-clay-soft dark:hover:border-clay-soft transition-colors">
+                                    <i class="fa-brands fa-linkedin-in text-sm"></i>
+                                </a>
+                                <a href="https://dribbble.com" target="_blank" rel="noopener noreferrer" aria-label="Dribbble" class="w-9 h-9 rounded-sm border border-line dark:border-line-dark flex items-center justify-center text-ink-muted dark:text-night-muted hover:text-clay hover:border-clay dark:hover:text-clay-soft dark:hover:border-clay-soft transition-colors">
+                                    <i class="fa-brands fa-dribbble text-sm"></i>
+                                </a>
+                                <a href="https://x.com" target="_blank" rel="noopener noreferrer" aria-label="X" class="w-9 h-9 rounded-sm border border-line dark:border-line-dark flex items-center justify-center text-ink-muted dark:text-night-muted hover:text-clay hover:border-clay dark:hover:text-clay-soft dark:hover:border-clay-soft transition-colors">
+                                    <i class="fa-brands fa-x-twitter text-sm"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Hero Visual (5 / 12) -->
+                    <div class="lg:col-span-5 reveal-element opacity-0 translate-y-2 transition-all duration-700 delay-150">
+                        <div class="border border-line dark:border-line-dark bg-paper-raised dark:bg-night-raised rounded-md overflow-hidden">
+                            <div class="flex items-center justify-between px-5 py-3 border-b border-line dark:border-line-dark">
+                                <span class="font-mono text-[11px] text-ink-muted dark:text-night-muted">profile.ts</span>
+                                <span class="font-label text-[10px] uppercase tracking-[0.14em] text-ink-soft dark:text-night-muted">TypeScript</span>
+                            </div>
+
+                            <pre class="font-mono text-[12.5px] leading-[1.75] overflow-x-auto p-5 text-ink-muted dark:text-night-muted"><code><span class="text-ink dark:text-night-ink font-medium">const</span> developer = {
+  <span class="text-ink-soft dark:text-night-muted">name</span>: <span class="text-clay dark:text-clay-soft">'Alex Morgan'</span>,
+  <span class="text-ink-soft dark:text-night-muted">role</span>: <span class="text-clay dark:text-clay-soft">'Full-Stack &amp; UI/UX'</span>,
+  <span class="text-ink-soft dark:text-night-muted">location</span>: <span class="text-clay dark:text-clay-soft">'San Francisco, CA'</span>,
+  <span class="text-ink-soft dark:text-night-muted">passions</span>: [
+    <span class="text-clay dark:text-clay-soft">'Clean Architecture'</span>,
+    <span class="text-clay dark:text-clay-soft">'Design Systems'</span>,
+    <span class="text-clay dark:text-clay-soft">'Micro-interactions'</span>
+  ],
+  <span class="text-ink-soft dark:text-night-muted">coffeeLevel</span>: <span class="text-ink dark:text-night-ink">Infinity</span>
+};</code></pre>
+
+                            <div class="grid grid-cols-3 border-t border-line dark:border-line-dark divide-x divide-line dark:divide-line-dark">
+                                <div class="px-4 py-4 text-center">
+                                    <p class="font-mono text-lg font-medium text-ink dark:text-night-ink leading-none">5+</p>
+                                    <p class="font-label text-[10px] uppercase tracking-[0.12em] text-ink-soft dark:text-night-muted mt-2">Years</p>
+                                </div>
+                                <div class="px-4 py-4 text-center">
+                                    <p class="font-mono text-lg font-medium text-ink dark:text-night-ink leading-none">40+</p>
+                                    <p class="font-label text-[10px] uppercase tracking-[0.12em] text-ink-soft dark:text-night-muted mt-2">Projects</p>
+                                </div>
+                                <div class="px-4 py-4 text-center">
+                                    <p class="font-mono text-lg font-medium text-ink dark:text-night-ink leading-none">99%</p>
+                                    <p class="font-label text-[10px] uppercase tracking-[0.12em] text-ink-soft dark:text-night-muted mt-2">Client joy</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== ABOUT ==================== -->
+        <section id="about" class="py-20 md:py-28 border-t border-line dark:border-line-dark">
+            <div class="max-w-page mx-auto px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-12 items-start">
+
+                    <div class="lg:col-span-5 reveal-element opacity-0 translate-y-2 transition-all duration-700">
+                        <div class="relative border border-line dark:border-line-dark rounded-md p-3 bg-paper-raised dark:bg-night-raised">
+                            <div class="aspect-square overflow-hidden rounded-sm bg-paper-sunken dark:bg-night">
+                                <img
+                                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80"
+                                    alt="Alex Morgan portrait"
+                                    onerror="this.onerror=null;this.src='https://placehold.co/600x600/EFEBE5/1A1C1E?text=Portrait';"
+                                    class="w-full h-full object-cover"
+                                >
+                            </div>
+                            <div class="mt-3 flex items-center justify-between gap-3 px-1">
+                                <div class="flex items-center gap-2.5">
+                                    <i class="fa-solid fa-award text-clay dark:text-clay-soft text-sm"></i>
+                                    <div>
+                                        <p class="font-label text-[10px] uppercase tracking-[0.12em] text-ink-soft dark:text-night-muted">Focus</p>
+                                        <p class="text-sm font-semibold text-ink dark:text-night-ink leading-tight">Product &amp; Web</p>
+                                    </div>
+                                </div>
+                                <span class="font-mono text-[11px] text-ink-soft dark:text-night-muted">SF / Remote</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-7 reveal-element opacity-0 translate-y-2 transition-all duration-700 delay-150">
+                        <div class="flex items-center gap-3 mb-5">
+                            <span class="font-label text-[11px] font-medium text-clay dark:text-clay-soft">01</span>
+                            <span class="h-px w-7 bg-line dark:bg-line-dark"></span>
+                            <span class="font-label text-[11px] font-medium uppercase tracking-[0.14em] text-ink-muted dark:text-night-muted">About</span>
+                        </div>
+
+                        <h2 class="text-[1.9rem] sm:text-4xl font-bold tracking-[-0.02em] leading-[1.15] text-ink dark:text-night-ink mb-6 max-w-[22ch]">
+                            Turning complex problems into intuitive products.
+                        </h2>
+
+                        <div class="space-y-4 text-ink-muted dark:text-night-muted leading-[1.7] max-w-[66ch]">
+                            <p>
+                                Hello! I'm Alex, a multidisciplinary Full-Stack Developer and UI/UX Designer with over 5 years of experience building web applications, design systems, and mobile interfaces from concept to deployment.
+                            </p>
+                            <p>
+                                My approach combines empathetic, user-centered design with clean, maintainable engineering. Whether architecting a resilient REST/GraphQL backend or fine-tuning spring physics in an interface, I care deeply about every pixel and millisecond.
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-px mt-10 bg-line dark:bg-line-dark border border-line dark:border-line-dark rounded-md overflow-hidden">
+                            <div class="bg-paper-raised dark:bg-night-raised p-5">
+                                <i class="fa-solid fa-code text-clay dark:text-clay-soft text-sm mb-3"></i>
+                                <h3 class="font-semibold text-ink dark:text-night-ink text-sm mb-1.5">Full-Stack Engineering</h3>
+                                <p class="text-[13px] leading-relaxed text-ink-muted dark:text-night-muted">End-to-end scalable web apps with modern React, Node.js, and cloud infrastructure.</p>
+                            </div>
+                            <div class="bg-paper-raised dark:bg-night-raised p-5">
+                                <i class="fa-solid fa-pen-nib text-clay dark:text-clay-soft text-sm mb-3"></i>
+                                <h3 class="font-semibold text-ink dark:text-night-ink text-sm mb-1.5">UI/UX &amp; Design Systems</h3>
+                                <p class="text-[13px] leading-relaxed text-ink-muted dark:text-night-muted">Accessible, component-driven interfaces prototyped in Figma and built with precision.</p>
+                            </div>
+                        </div>
+
+                        <button onclick="showToast('Resume PDF download started! (Placeholder action)')" class="mt-8 inline-flex items-center gap-2.5 h-11 px-5 rounded-sm border border-ink dark:border-night-ink text-ink dark:text-night-ink text-sm font-semibold hover:bg-ink hover:text-paper dark:hover:bg-night-ink dark:hover:text-ink transition-colors">
+                            <i class="fa-solid fa-download text-[12px]"></i>
+                            Download resume
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== SKILLS ==================== -->
+        <section id="skills" class="py-20 md:py-28 border-t border-line dark:border-line-dark">
+            <div class="max-w-page mx-auto px-6 lg:px-8">
+
+                <div class="flex items-center gap-3 mb-5 reveal-element opacity-0 translate-y-2 transition-all duration-700">
+                    <span class="font-label text-[11px] font-medium text-clay dark:text-clay-soft">02</span>
+                    <span class="h-px w-7 bg-line dark:bg-line-dark"></span>
+                    <span class="font-label text-[11px] font-medium uppercase tracking-[0.14em] text-ink-muted dark:text-night-muted">Tech stack</span>
+                </div>
+
+                <div class="max-w-[60ch] mb-14 reveal-element opacity-0 translate-y-2 transition-all duration-700">
+                    <h2 class="text-[1.9rem] sm:text-4xl font-bold tracking-[-0.02em] leading-[1.15] text-ink dark:text-night-ink mb-4">
+                        Skills &amp; technologies
+                    </h2>
+                    <p class="text-ink-muted dark:text-night-muted leading-[1.7]">
+                        A curated set of modern tools, languages, and frameworks I rely on to ship high-performing digital products.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-12">
+
+                    <div class="pt-7 border-t-2 border-ink dark:border-night-ink reveal-element opacity-0 translate-y-2 transition-all duration-700">
+                        <div class="flex items-baseline justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-ink dark:text-night-ink">Frontend</h3>
+                            <span class="font-mono text-[11px] text-ink-soft dark:text-night-muted">01</span>
+                        </div>
+                        <p class="text-sm leading-relaxed text-ink-muted dark:text-night-muted mb-6">Responsive, interactive, and accessible user interfaces.</p>
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex items-center gap-3 text-ink dark:text-night-ink"><i class="fa-brands fa-react w-4 text-center text-ink-soft dark:text-night-muted"></i>React / Next.js</li>
+                            <li class="flex items-center gap-3 text-ink dark:text-night-ink"><i class="fa-brands fa-js w-4 text-center text-ink-soft dark:text-night-muted"></i>TypeScript / ES6+</li>
+                            <li class="flex items-center gap-3 text-ink dark:text-night-ink"><i class="fa-solid fa-wind w-4 text-center text-ink-soft dark:text-night-muted"></i>Tailwind CSS</li>
+                            <li class="flex items-center gap-3 text-ink dark:text-night-ink"><i class="fa-brands fa-vuejs w-4 text-center text-ink-soft dark:text-night-muted"></i>Vue.js</li>
+                            <li class="flex items-center gap-3 text-ink dark:text-night-ink"><i class="fa-brands fa-html5 w-4 text-center text-ink-soft dark:text-night-muted"></i>HTML5 / CSS3</li>
+                        </ul>
+                    </div>
+
+                    <div class="pt-7 border-t-2 border-ink dark:border-night-ink reveal-element opacity-0 translate-y-2 transition-all duration-700 delay-100">
+                        <div class="flex items-baseline justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-ink dark:text-night-ink">Backend &amp; data</h3>
+                            <span class="font-mono text-[11px] text-ink-soft dark:text-night-muted">02</span>
+                        </div>
+                        <p class="text-sm leading-relaxed text-ink-muted dark:text-night-muted mb-6">Robust APIs, authentication, and scalable cloud storage.</p>
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex items-center gap-3 text-ink dark:text-night-ink"><i class="fa-brands fa-node-js w-4 text-center text-ink-soft dark:text-night-muted"></i>Node.js / Express</li>
+                            <li class="flex items-center gap-3 text-ink dark:text-night-ink"><i class="fa-brands fa-python w-4 text-center text-ink-soft dark:text-night-muted"></i>Python / FastAPI</li>
+                            <li class="flex items-center gap-3 text-ink dark:text-night-ink"><i class="fa-solid fa-database w-4 text-center text-ink-soft dark:text-night-muted"></i>PostgreSQL</li>
+                            <li class="flex items-center gap-3 text-ink dark:text-night-ink"><i class="fa-solid fa-leaf w-4 text-center text-ink-soft dark:text-night-muted"></i>MongoDB</li>
+                            <li class="flex items-center gap-3 text-ink dark:text-night-ink"><i class="fa-brands fa-docker w-4 text-center text-ink-soft dark:text-night-muted"></i>Docker / AWS</li>
+                        </ul>
+                    </div>
+
+                    <div class="pt-7 border-t-2 border-ink dark:border-night-ink reveal-element opacity-0 translate-y-2 transition-all duration-700 delay-200">
+                        <div class="flex items-baseline justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-ink dark:text-night-ink">Design &amp; workflow</h3>
+                            <span class="font-mono text-[11px] text-ink-soft dark:text-night-muted">03</span>
+                        </div>
+                        <p class="text-sm leading-relaxed text-ink-muted dark:text-night-muted mb-6">Wireframing, prototyping, and version control.</p>
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex items-center gap-3 text-ink dark:text-night-ink"><i class="fa-brands fa-figma w-4 text-center text-ink-soft dark:text-night-muted"></i>Figma</li>
+                            <li class="flex items-center gap-3 text-ink dark:text-night-ink"><i class="fa-solid fa-layer-group w-4 text-center text-ink-soft dark:text-night-muted"></i>Design systems</li>
+                            <li class="flex items-center gap-3 text-ink dark:text-night-ink"><i class="fa-brands fa-git-alt w-4 text-center text-ink-soft dark:text-night-muted"></i>Git &amp; GitHub</li>
+                            <li class="flex items-center gap-3 text-ink dark:text-night-ink"><i class="fa-solid fa-mobile-screen w-4 text-center text-ink-soft dark:text-night-muted"></i>Prototyping</li>
+                            <li class="flex items-center gap-3 text-ink dark:text-night-ink"><i class="fa-solid fa-universal-access w-4 text-center text-ink-soft dark:text-night-muted"></i>WCAG accessibility</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PROJECTS ==================== -->
+        <section id="projects" class="py-20 md:py-28 border-t border-line dark:border-line-dark">
+            <div class="max-w-page mx-auto px-6 lg:px-8">
+
+                <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-4 reveal-element opacity-0 translate-y-2 transition-all duration-700">
+                    <div>
+                        <div class="flex items-center gap-3 mb-5">
+                            <span class="font-label text-[11px] font-medium text-clay dark:text-clay-soft">03</span>
+                            <span class="h-px w-7 bg-line dark:bg-line-dark"></span>
+                            <span class="font-label text-[11px] font-medium uppercase tracking-[0.14em] text-ink-muted dark:text-night-muted">Portfolio</span>
+                        </div>
+                        <h2 class="text-[1.9rem] sm:text-4xl font-bold tracking-[-0.02em] leading-[1.15] text-ink dark:text-night-ink">
+                            Featured projects
+                        </h2>
+                    </div>
+
+                    <div id="project-filters" class="flex items-center gap-7 border-b border-line dark:border-line-dark">
+                        <button data-filter="all" class="filter-btn is-active text-sm font-semibold">All</button>
+                        <button data-filter="web" class="filter-btn text-sm font-semibold">Web dev</button>
+                        <button data-filter="design" class="filter-btn text-sm font-semibold">Design</button>
+                        <button data-filter="apps" class="filter-btn text-sm font-semibold">Apps</button>
+                    </div>
+                </div>
+
+                <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10 mt-10">
+                    <!-- Cards injected by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== EXPERIENCE ==================== -->
+        <section id="experience" class="py-20 md:py-28 border-t border-line dark:border-line-dark">
+            <div class="max-w-page mx-auto px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-12">
+
+                    <div class="lg:col-span-4">
+                        <div class="flex items-center gap-3 mb-5 reveal-element opacity-0 translate-y-2 transition-all duration-700">
+                            <span class="font-label text-[11px] font-medium text-clay dark:text-clay-soft">04</span>
+                            <span class="h-px w-7 bg-line dark:bg-line-dark"></span>
+                            <span class="font-label text-[11px] font-medium uppercase tracking-[0.14em] text-ink-muted dark:text-night-muted">Career</span>
+                        </div>
+                        <h2 class="text-[1.9rem] sm:text-4xl font-bold tracking-[-0.02em] leading-[1.15] text-ink dark:text-night-ink max-w-[16ch] reveal-element opacity-0 translate-y-2 transition-all duration-700">
+                            Experience &amp; education
+                        </h2>
+                    </div>
+
+                    <div class="lg:col-span-8">
+                        <div class="relative border-l border-line dark:border-line-dark pl-8 space-y-10">
+
+                            <div class="relative reveal-element opacity-0 translate-y-2 transition-all duration-700">
+                                <span class="absolute -left-[35px] top-1.5 w-2 h-2 bg-clay dark:bg-clay-soft"></span>
+                                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                    <span class="font-label text-[11px] font-medium uppercase tracking-[0.12em] text-clay dark:text-clay-soft">2024 — Present</span>
+                                    <span class="font-mono text-[11px] text-ink-soft dark:text-night-muted">San Francisco, CA</span>
+                                </div>
+                                <h3 class="text-lg font-semibold text-ink dark:text-night-ink">Senior Full-Stack Engineer</h3>
+                                <p class="text-sm font-medium text-ink-muted dark:text-night-muted mb-2">NovaTech Cloud Solutions</p>
+                                <p class="text-sm leading-[1.7] text-ink-muted dark:text-night-muted max-w-[62ch]">
+                                    Leading frontend architecture and design system adoption across 4 core SaaS products. Improved dashboard rendering performance by 42% and mentored a team of 6 engineers.
+                                </p>
+                            </div>
+
+                            <div class="relative reveal-element opacity-0 translate-y-2 transition-all duration-700 delay-100">
+                                <span class="absolute -left-[35px] top-1.5 w-2 h-2 bg-ink-muted dark:bg-night-muted"></span>
+                                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                    <span class="font-label text-[11px] font-medium uppercase tracking-[0.12em] text-ink-muted dark:text-night-muted">2021 — 2024</span>
+                                    <span class="font-mono text-[11px] text-ink-soft dark:text-night-muted">Remote</span>
+                                </div>
+                                <h3 class="text-lg font-semibold text-ink dark:text-night-ink">Product Designer &amp; Frontend Developer</h3>
+                                <p class="text-sm font-medium text-ink-muted dark:text-night-muted mb-2">PixelCraft Studio</p>
+                                <p class="text-sm leading-[1.7] text-ink-muted dark:text-night-muted max-w-[62ch]">
+                                    Designed and developed bespoke web applications and interactive marketing sites for fintech and health-tech startups using React, TypeScript, and Figma.
+                                </p>
+                            </div>
+
+                            <div class="relative reveal-element opacity-0 translate-y-2 transition-all duration-700 delay-200">
+                                <span class="absolute -left-[35px] top-1.5 w-2 h-2 bg-ink-muted dark:bg-night-muted"></span>
+                                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                    <span class="font-label text-[11px] font-medium uppercase tracking-[0.12em] text-ink-muted dark:text-night-muted">2017 — 2021</span>
+                                    <span class="font-mono text-[11px] text-ink-soft dark:text-night-muted">Seattle, WA</span>
+                                </div>
+                                <h3 class="text-lg font-semibold text-ink dark:text-night-ink">B.S. Computer Science &amp; HCI</h3>
+                                <p class="text-sm font-medium text-ink-muted dark:text-night-muted mb-2">University of Washington</p>
+                                <p class="text-sm leading-[1.7] text-ink-muted dark:text-night-muted max-w-[62ch]">
+                                    Graduated with honors. Specialized in interactive systems, software engineering, and visual communication design.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CONTACT ==================== -->
+        <section id="contact" class="py-20 md:py-28 border-t border-line dark:border-line-dark">
+            <div class="max-w-page mx-auto px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-12 items-start">
+
+                    <div class="lg:col-span-5 reveal-element opacity-0 translate-y-2 transition-all duration-700">
+                        <div class="flex items-center gap-3 mb-5">
+                            <span class="font-label text-[11px] font-medium text-clay dark:text-clay-soft">05</span>
+                            <span class="h-px w-7 bg-line dark:bg-line-dark"></span>
+                            <span class="font-label text-[11px] font-medium uppercase tracking-[0.14em] text-ink-muted dark:text-night-muted">Contact</span>
+                        </div>
+
+                        <h2 class="text-[1.9rem] sm:text-4xl font-bold tracking-[-0.02em] leading-[1.15] text-ink dark:text-night-ink mb-5 max-w-[20ch]">
+                            Let's build something remarkable.
+                        </h2>
+                        <p class="text-ink-muted dark:text-night-muted leading-[1.7] mb-10 max-w-[52ch]">
+                            Have a project in mind, need a design consultation, or just want to say hello? Fill out the form or reach out directly.
+                        </p>
+
+                        <div class="border border-line dark:border-line-dark rounded-md divide-y divide-line dark:divide-line-dark">
+                            <div class="flex items-center gap-4 p-4">
+                                <i class="fa-regular fa-envelope text-ink-soft dark:text-night-muted w-5 text-center"></i>
+                                <div class="min-w-0 flex-1">
+                                    <p class="font-label text-[10px] uppercase tracking-[0.12em] text-ink-soft dark:text-night-muted mb-0.5">Email</p>
+                                    <p id="email-text" class="text-sm font-medium text-ink dark:text-night-ink truncate">hello@alexmorgan.dev</p>
+                                </div>
+                                <button onclick="copyEmail()" aria-label="Copy email address" title="Copy email" class="w-8 h-8 rounded-sm border border-line dark:border-line-dark flex items-center justify-center text-ink-muted dark:text-night-muted hover:border-ink hover:text-ink dark:hover:border-night-ink dark:hover:text-night-ink transition-colors">
+                                    <i class="fa-regular fa-copy text-xs"></i>
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-4 p-4">
+                                <i class="fa-solid fa-location-dot text-ink-soft dark:text-night-muted w-5 text-center"></i>
+                                <div>
+                                    <p class="font-label text-[10px] uppercase tracking-[0.12em] text-ink-soft dark:text-night-muted mb-0.5">Location</p>
+                                    <p class="text-sm font-medium text-ink dark:text-night-ink">San Francisco, CA — open to remote</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8">
+                            <p class="font-label text-[11px] uppercase tracking-[0.14em] text-ink-soft dark:text-night-muted mb-4">Connect</p>
+                            <div class="flex items-center gap-2">
+                                <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="w-9 h-9 rounded-sm border border-line dark:border-line-dark flex items-center justify-center text-ink-muted dark:text-night-muted hover:text-clay hover:border-clay dark:hover:text-clay-soft dark:hover:border-clay-soft transition-colors">
+                                    <i class="fa-brands fa-github text-sm"></i>
+                                </a>
+                                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="w-9 h-9 rounded-sm border border-line dark:border-line-dark flex items-center justify-center text-ink-muted dark:text-night-muted hover:text-clay hover:border-clay dark:hover:text-clay-soft dark:hover:border-clay-soft transition-colors">
+                                    <i class="fa-brands fa-linkedin-in text-sm"></i>
+                                </a>
+                                <a href="https://dribbble.com" target="_blank" rel="noopener noreferrer" aria-label="Dribbble" class="w-9 h-9 rounded-sm border border-line dark:border-line-dark flex items-center justify-center text-ink-muted dark:text-night-muted hover:text-clay hover:border-clay dark:hover:text-clay-soft dark:hover:border-clay-soft transition-colors">
+                                    <i class="fa-brands fa-dribbble text-sm"></i>
+                                </a>
+                                <a href="https://x.com" target="_blank" rel="noopener noreferrer" aria-label="X" class="w-9 h-9 rounded-sm border border-line dark:border-line-dark flex items-center justify-center text-ink-muted dark:text-night-muted hover:text-clay hover:border-clay dark:hover:text-clay-soft dark:hover:border-clay-soft transition-colors">
+                                    <i class="fa-brands fa-x-twitter text-sm"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-7 reveal-element opacity-0 translate-y-2 transition-all duration-700 delay-150">
+                        <form id="contact-form" class="border border-line dark:border-line-dark rounded-md p-6 sm:p-8 space-y-5">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                <div>
+                                    <label for="name" class="block font-label text-[11px] uppercase tracking-[0.12em] text-ink-muted dark:text-night-muted mb-2">Your name</label>
+                                    <input type="text" id="name" name="name" required placeholder="Jane Doe" class="w-full h-12 px-4 rounded-sm bg-paper-raised dark:bg-night-raised border border-line dark:border-line-dark text-sm text-ink dark:text-night-ink placeholder:text-ink-soft dark:placeholder:text-night-muted focus:outline-none focus:border-clay focus:ring-2 focus:ring-clay/20 transition-colors">
+                                </div>
+                                <div>
+                                    <label for="email" class="block font-label text-[11px] uppercase tracking-[0.12em] text-ink-muted dark:text-night-muted mb-2">Email address</label>
+                                    <input type="email" id="email" name="email" required placeholder="jane@example.com" class="w-full h-12 px-4 rounded-sm bg-paper-raised dark:bg-night-raised border border-line dark:border-line-dark text-sm text-ink dark:text-night-ink placeholder:text-ink-soft dark:placeholder:text-night-muted focus:outline-none focus:border-clay focus:ring-2 focus:ring-clay/20 transition-colors">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="subject" class="block font-label text-[11px] uppercase tracking-[0.12em] text-ink-muted dark:text-night-muted mb-2">Subject</label>
+                                <input type="text" id="subject" name="subject" required placeholder="Project inquiry / collaboration" class="w-full h-12 px-4 rounded-sm bg-paper-raised dark:bg-night-raised border border-line dark:border-line-dark text-sm text-ink dark:text-night-ink placeholder:text-ink-soft dark:placeholder:text-night-muted focus:outline-none focus:border-clay focus:ring-2 focus:ring-clay/20 transition-colors">
+                            </div>
+
+                            <div>
+                                <label for="message" class="block font-label text-[11px] uppercase tracking-[0.12em] text-ink-muted dark:text-night-muted mb-2">Message</label>
+                                <textarea id="message" name="message" rows="5" required placeholder="Tell me about your timeline, goals, and project details…" class="w-full px-4 py-3 rounded-sm bg-paper-raised dark:bg-night-raised border border-line dark:border-line-dark text-sm text-ink dark:text-night-ink placeholder:text-ink-soft dark:placeholder:text-night-muted focus:outline-none focus:border-clay focus:ring-2 focus:ring-clay/20 transition-colors resize-none"></textarea>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
+                                <p class="font-mono text-[11px] text-ink-soft dark:text-night-muted">Usually replies within 24 hours.</p>
+                                <button type="submit" id="submit-btn" class="inline-flex items-center justify-center gap-2.5 h-12 px-7 rounded-sm bg-ink dark:bg-night-ink text-paper dark:text-ink text-sm font-semibold hover:bg-clay dark:hover:bg-clay-soft dark:hover:text-ink transition-colors">
+                                    <span>Send message</span>
+                                    <i class="fa-solid fa-paper-plane text-[11px]"></i>
+                                </button>
+                            </div>
+
+                            <div id="form-success" class="hidden p-4 rounded-sm border border-line dark:border-line-dark text-sm flex items-start gap-3">
+                                <i class="fa-solid fa-circle-check text-clay dark:text-clay-soft mt-0.5"></i>
+                                <span class="text-ink dark:text-night-ink">Thanks for reaching out! Your message has been sent and I'll get back to you soon.</span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="border-t border-line dark:border-line-dark py-8">
+        <div class="max-w-page mx-auto px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <span class="font-semibold text-sm text-ink dark:text-night-ink">Alex<span class="text-clay dark:text-clay-soft">.dev</span></span>
+                <span class="text-ink-soft dark:text-night-muted text-sm">© <span id="current-year"></span> Alex Morgan. All rights reserved.</span>
+            </div>
+            <a href="#home" class="inline-flex items-center gap-2 font-label text-[11px] uppercase tracking-[0.12em] text-ink-muted dark:text-night-muted hover:text-clay dark:hover:text-clay-soft transition-colors">
+                Back to top
+                <i class="fa-solid fa-arrow-up text-[9px]"></i>
+            </a>
+        </div>
+    </footer>
+
+    <!-- ==================== PROJECT MODAL ==================== -->
+    <div id="project-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 sm:p-6 bg-ink/70 dark:bg-night/80 transition-opacity" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="relative w-full max-w-2xl bg-paper dark:bg-night-raised border border-line dark:border-line-dark rounded-md shadow-2xl overflow-hidden transform transition-all duration-200 scale-95 opacity-0" id="modal-panel">
+            <button id="close-modal-btn" aria-label="Close modal" class="absolute top-4 right-4 z-10 w-9 h-9 rounded-sm bg-paper/90 dark:bg-night/90 border border-line dark:border-line-dark text-ink dark:text-night-ink flex items-center justify-center hover:border-ink dark:hover:border-night-ink transition-colors">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+
+            <div class="h-56 sm:h-64 w-full bg-paper-sunken dark:bg-night overflow-hidden border-b border-line dark:border-line-dark">
+                <img id="modal-image" src="" alt="Project preview" class="w-full h-full object-cover">
+            </div>
+
+            <div class="p-6 sm:p-8">
+                <div class="flex items-center gap-3 mb-3">
+                    <span id="modal-category" class="font-label text-[10px] font-medium uppercase tracking-[0.12em] text-clay dark:text-clay-soft"></span>
+                    <span class="w-px h-3 bg-line dark:bg-line-dark"></span>
+                    <span id="modal-year" class="font-mono text-[11px] text-ink-soft dark:text-night-muted"></span>
+                </div>
+
+                <h3 id="modal-title" class="text-2xl font-bold tracking-[-0.02em] text-ink dark:text-night-ink mb-3"></h3>
+                <p id="modal-description" class="text-ink-muted dark:text-night-muted text-sm leading-[1.7] mb-6"></p>
+
+                <div class="mb-6">
+                    <p class="font-label text-[10px] uppercase tracking-[0.14em] text-ink-soft dark:text-night-muted mb-3">Technologies used</p>
+                    <div id="modal-tags" class="flex flex-wrap gap-1.5"></div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3 pt-5 border-t border-line dark:border-line-dark">
+                    <a id="modal-live-link" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 h-10 px-4 rounded-sm bg-ink dark:bg-night-ink text-paper dark:text-ink text-[13px] font-semibold hover:bg-clay dark:hover:bg-clay-soft dark:hover:text-ink transition-colors">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        Live demo
+                    </a>
+                    <a id="modal-repo-link" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 h-10 px-4 rounded-sm border border-line dark:border-line-dark text-ink dark:text-night-ink text-[13px] font-semibold hover:border-ink dark:hover:border-night-ink transition-colors">
+                        <i class="fa-brands fa-github text-sm"></i>
+                        Source code
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TOAST ==================== -->
+    <div id="toast-notification" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-ink dark:bg-night-ink text-paper dark:text-ink px-4 py-3 rounded-sm flex items-center gap-3 text-sm font-medium shadow-lg">
+            <i class="fa-solid fa-circle-info text-clay-soft dark:text-clay text-xs"></i>
+            <span id="toast-message">Notification</span>
+        </div>
+    </div>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        // 1. Projects data (easy to customize)
+        const projectsData = [
+            {
+                id: 1,
+                title: "PulseMetrics Analytics SaaS",
+                category: "web",
+                categoryLabel: "Web Dev",
+                year: "2026",
+                summary: "Real-time product analytics dashboard with customizable widgets, funnel tracking, and team workspaces.",
+                description: "Built from the ground up using Next.js, TypeScript, and PostgreSQL. Features sub-second query aggregation, role-based access control, interactive D3 charts, and automated weekly PDF digest reports.",
+                image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80",
+                fallback: "https://placehold.co/800x500/EFEBE5/1A1C1E?text=PulseMetrics",
+                tags: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL", "D3.js"],
+                liveUrl: "https://example.com",
+                repoUrl: "https://github.com"
+            },
+            {
+                id: 2,
+                title: "Lumina Design System",
+                category: "design",
+                categoryLabel: "Design",
+                year: "2025",
+                summary: "A comprehensive multi-brand UI kit and accessible React component library with 60+ primitives.",
+                description: "Created a unified token architecture in Figma synced directly to GitHub via Style Dictionary. Includes full dark mode parity, WCAG AA contrast verification, and interactive Storybook documentation.",
+                image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=900&q=80",
+                fallback: "https://placehold.co/800x500/E2DDD5/1A1C1E?text=Lumina",
+                tags: ["Figma", "Design Tokens", "React", "Storybook", "Accessibility"],
+                liveUrl: "https://example.com",
+                repoUrl: "https://github.com"
+            },
+            {
+                id: 3,
+                title: "NomadFlow Travel Companion",
+                category: "apps",
+                categoryLabel: "Apps",
+                year: "2025",
+                summary: "Offline-first itinerary planner and expense splitter built for digital nomads and group travelers.",
+                description: "Cross-platform mobile application built with React Native and Expo. Offers offline map caching, multi-currency receipt scanning, and real-time collaborative trip boards.",
+                image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=900&q=80",
+                fallback: "https://placehold.co/800x500/6C7278/F7F5F2?text=NomadFlow",
+                tags: ["React Native", "Expo", "Node.js", "SQLite", "Firebase"],
+                liveUrl: "https://example.com",
+                repoUrl: "https://github.com"
+            },
+            {
+                id: 4,
+                title: "Aether AI Studio",
+                category: "web",
+                categoryLabel: "Web Dev",
+                year: "2025",
+                summary: "Collaborative canvas for prompt engineering, workflow chaining, and model benchmarking.",
+                description: "Web-based node editor enabling product teams to test and compare LLM responses side-by-side with latency telemetry, version history, and one-click API endpoint deployment.",
+                image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=900&q=80",
+                fallback: "https://placehold.co/800x500/1A1C1E/F7F5F2?text=Aether",
+                tags: ["React", "TypeScript", "Python", "FastAPI", "WebSockets"],
+                liveUrl: "https://example.com",
+                repoUrl: "https://github.com"
+            },
+            {
+                id: 5,
+                title: "Kinetix Fintech Mobile UX",
+                category: "design",
+                categoryLabel: "Design",
+                year: "2024",
+                summary: "End-to-end UX overhaul for a personal wealth and automated micro-investing mobile app.",
+                description: "Conducted 25+ user interviews, crafted interactive Figma prototypes, and redesigned the onboarding flow — resulting in a 34% increase in verified account activations.",
+                image: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?auto=format&fit=crop&w=900&q=80",
+                fallback: "https://placehold.co/800x500/B8422E/F7F5F2?text=Kinetix",
+                tags: ["UX Research", "Figma", "Prototyping", "Motion Design"],
+                liveUrl: "https://example.com",
+                repoUrl: "https://github.com"
+            },
+            {
+                id: 6,
+                title: "Zenith Habit & Focus Timer",
+                category: "apps",
+                categoryLabel: "Apps",
+                year: "2024",
+                summary: "Minimalist Pomodoro timer, ambient soundscape mixer, and daily habit streak tracker.",
+                description: "Progressive Web App (PWA) and desktop wrapper featuring Web Audio API synthesized ambient soundscapes, keyboard-first navigation, and encrypted cloud sync.",
+                image: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=900&q=80",
+                fallback: "https://placehold.co/800x500/EFEBE5/1A1C1E?text=Zenith",
+                tags: ["Vue.js", "PWA", "Tailwind CSS", "Web Audio API"],
+                liveUrl: "https://example.com",
+                repoUrl: "https://github.com"
+            }
+        ];
+
+        // 2. Theme management
+        const htmlEl = document.documentElement;
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('theme-icon-sun');
+        const moonIcon = document.getElementById('theme-icon-moon');
+
+        function applyTheme(isDark) {
+            if (isDark) {
+                htmlEl.classList.add('dark');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                htmlEl.classList.remove('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        }
+
+        const savedTheme = localStorage.getItem('portfolio-theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        applyTheme(savedTheme ? savedTheme === 'dark' : prefersDark);
+
+        themeToggleBtn.addEventListener('click', () => {
+            const isDark = !htmlEl.classList.contains('dark');
+            applyTheme(isDark);
+            localStorage.setItem('portfolio-theme', isDark ? 'dark' : 'light');
+        });
+
+        // 3. Mobile navigation
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuIcon = document.getElementById('mobile-menu-icon');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            const isHidden = mobileMenu.classList.toggle('hidden');
+            mobileMenuIcon.className = isHidden
+                ? 'fa-solid fa-bars text-[13px]'
+                : 'fa-solid fa-xmark text-[13px]';
+        });
+
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                mobileMenuIcon.className = 'fa-solid fa-bars text-[13px]';
+            });
+        });
+
+        // 4. Render & filter projects
+        const projectsGrid = document.getElementById('projects-grid');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+
+        function renderProjects(filter = 'all') {
+            projectsGrid.innerHTML = '';
+            const filtered = filter === 'all'
+                ? projectsData
+                : projectsData.filter(project => project.category === filter);
+
+            filtered.forEach(project => {
+                const card = document.createElement('article');
+                card.className = 'group flex flex-col border border-line dark:border-line-dark bg-paper-raised dark:bg-night-raised rounded-md overflow-hidden hover:border-ink dark:hover:border-night-muted transition-colors cursor-pointer';
+                card.onclick = () => openProjectModal(project);
+
+                const tagsHtml = project.tags.slice(0, 3).map(tag =>
+                    `<span class="px-2 py-1 rounded-sm text-[11px] font-medium text-ink-muted dark:text-night-muted border border-line dark:border-line-dark">${tag}</span>`
+                ).join('');
+
+                card.innerHTML = `
+                    <div class="relative h-52 overflow-hidden bg-paper-sunken dark:bg-night border-b border-line dark:border-line-dark">
+                        <img
+                            src="${project.image}"
+                            alt="${project.title}"
+                            onerror="this.onerror=null;this.src='${project.fallback}';"
+                            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                        >
+                        <span class="absolute top-3 left-3 px-2 py-1 rounded-sm font-label text-[10px] font-medium uppercase tracking-[0.12em] bg-paper/95 dark:bg-night/95 text-ink dark:text-night-ink border border-line dark:border-line-dark">
+                            ${project.categoryLabel}
+                        </span>
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col">
+                        <div class="flex items-start justify-between gap-3 mb-2">
+                            <h3 class="text-base font-semibold text-ink dark:text-night-ink group-hover:text-clay dark:group-hover:text-clay-soft transition-colors">
+                                ${project.title}
+                            </h3>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-ink-soft dark:text-night-muted mt-1.5 shrink-0"></i>
+                        </div>
+                        <p class="text-[13px] leading-relaxed text-ink-muted dark:text-night-muted mb-5 flex-1">
+                            ${project.summary}
+                        </p>
+                        <div class="flex flex-wrap gap-1.5 pt-4 border-t border-line dark:border-line-dark">
+                            ${tagsHtml}
+                        </div>
+                    </div>
+                `;
+                projectsGrid.appendChild(card);
+            });
+        }
+
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => b.classList.remove('is-active'));
+                btn.classList.add('is-active');
+                renderProjects(btn.getAttribute('data-filter'));
+            });
+        });
+
+        renderProjects('all');
+
+        // 5. Project modal
+        const modal = document.getElementById('project-modal');
+        const modalPanel = document.getElementById('modal-panel');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+
+        function openProjectModal(project) {
+            document.getElementById('modal-image').src = project.image;
+            document.getElementById('modal-image').onerror = function () { this.src = project.fallback; };
+            document.getElementById('modal-category').textContent = project.categoryLabel;
+            document.getElementById('modal-year').textContent = project.year;
+            document.getElementById('modal-title').textContent = project.title;
+            document.getElementById('modal-description').textContent = project.description;
+            document.getElementById('modal-live-link').href = project.liveUrl;
+            document.getElementById('modal-repo-link').href = project.repoUrl;
+
+            document.getElementById('modal-tags').innerHTML = project.tags.map(tag =>
+                `<span class="px-2.5 py-1 rounded-sm text-[11px] font-medium text-ink-muted dark:text-night-muted border border-line dark:border-line-dark">${tag}</span>`
+            ).join('');
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+
+            requestAnimationFrame(() => {
+                modalPanel.classList.remove('scale-95', 'opacity-0');
+                modalPanel.classList.add('scale-100', 'opacity-100');
+            });
+        }
+
+        function closeProjectModal() {
+            modalPanel.classList.remove('scale-100', 'opacity-100');
+            modalPanel.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
+            }, 200);
+        }
+
+        closeModalBtn.addEventListener('click', closeProjectModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeProjectModal();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                closeProjectModal();
+            }
+        });
+
+        // 6. Contact form
+        const contactForm = document.getElementById('contact-form');
+        const formSuccess = document.getElementById('form-success');
+        const submitBtn = document.getElementById('submit-btn');
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const originalBtnContent = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> <span>Sending…</span>`;
+
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnContent;
+                contactForm.reset();
+                formSuccess.classList.remove('hidden');
+                showToast('Message sent successfully!');
+
+                setTimeout(() => formSuccess.classList.add('hidden'), 6000);
+            }, 900);
+        });
+
+        // 7. Copy email
+        function copyEmail() {
+            const email = document.getElementById('email-text').textContent;
+            const tempInput = document.createElement('input');
+            tempInput.value = email;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            try {
+                document.execCommand('copy');
+                showToast('Email copied to clipboard!');
+            } catch (err) {
+                showToast('Could not copy email.');
+            }
+            document.body.removeChild(tempInput);
+        }
+
+        // 8. Toast
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('toast-notification');
+            document.getElementById('toast-message').textContent = message;
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // 9. Scroll reveal
+        const revealElements = document.querySelectorAll('.reveal-element');
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.remove('opacity-0', 'translate-y-2');
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // 10. Active nav link on scroll
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                if (window.scrollY >= section.offsetTop - 120) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.toggle('is-active', link.getAttribute('href') === `#${current}`);
+            });
+        });
+    </script>
+</body>
+</html>
